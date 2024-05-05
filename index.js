@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-const port = process.env.PORT || 3000; // Utiliza el puerto proporcionado por Railway o 3000 por defecto
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -25,7 +25,10 @@ app.post('/api/users', async (req, res) => {
   const { username, email, password } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)';
+    const query = `
+    INSERT INTO \`Users\` (username, email, password)
+    VALUES (?, ?, ?);
+    `;
     connection.query(query, [username, email, hashedPassword], (error, results) => {
       if (error) {
         console.error('Error inserting user:', error);
@@ -44,7 +47,7 @@ app.post('/api/users', async (req, res) => {
 app.post('/api/users/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const query = 'SELECT * FROM user WHERE username = ?';
+    const query = 'SELECT * FROM `Users` WHERE username = ?';
     connection.query(query, [username], async (error, results) => {
       if (error) {
         console.error('Error finding user:', error);

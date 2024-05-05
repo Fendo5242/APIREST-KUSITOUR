@@ -4,17 +4,12 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Utiliza el puerto proporcionado por Railway o 3000 por defecto
 
 app.use(bodyParser.json());
 
 // Configura la conexión con la base de datos
-const connection = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'fendo365S', // Reemplaza con tu contraseña
-  database: 'kusitour'
-});
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 // Conecta con la base de datos
 connection.connect(error => {

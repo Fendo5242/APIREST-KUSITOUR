@@ -8,13 +8,13 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-// Configura la conexión con la base de datos (Private Networking)
+// Configura la conexión con la base de datos
 const connection = mysql.createConnection({
-  host: 'roundhouse.proxy.rlwy.net',
-  port: 31523,
-  user: 'root', // Reemplaza con tu usuario de MySQL
-  password: 'lJinlsBQFCJZRVIdMzmaeQwySEnZuFku', // Reemplaza con tu contraseña de MySQL
-  database: 'Users' // Reemplaza con el nombre de tu base de datos
+  host: process.env.MYSQLHOST || 'roundhouse.proxy.rlwy.net',
+  port: process.env.MYSQLPORT || 31523,
+  user: process.env.MYSQLUSER || 'root',
+  password: process.env.MYSQLPASSWORD || 'lJinlsBQFCJZRVIdMzmaeQwySEnZuFku',
+  database: process.env.MYSQLDATABASE || 'railway'
 });
 
 // Conecta con la base de datos
@@ -25,6 +25,7 @@ connection.connect(error => {
   }
   console.log('Connected to the database');
 });
+
 // Define una ruta para registrar usuarios
 app.post('/api/users', async (req, res) => {
   const { username, email, password } = req.body;

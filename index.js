@@ -32,8 +32,8 @@ app.post('/api/users', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const query = `
-    INSERT INTO \`Users\` (username, email, password)
-    VALUES (?, ?, ?);
+      INSERT INTO \`Users\` (username, email, password)
+      VALUES (?, ?, ?);
     `;
     connection.query(query, [username, email, hashedPassword], (error, results) => {
       if (error) {
@@ -41,7 +41,7 @@ app.post('/api/users', async (req, res) => {
         res.status(500).json({ error: 'Error inserting user' });
         return;
       }
-      res.status(201).json({ id: results.insertId, username, email, password: hashedPassword });
+      res.status(201).json({ id: results.insertId, username, email });
     });
   } catch (error) {
     console.error('Error hashing password:', error);
@@ -69,7 +69,15 @@ app.post('/api/users/login', async (req, res) => {
       const user = results[0];
       const match = await bcrypt.compare(password, user.password);
       if (match) {
-        res.status(200).json({ message: `Welcome, ${user.username}` });
+        res.status(200).json({
+          message: `Welcome, ${user.username}`,
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email
+            // No es seguro devolver la contraseña, se recomienda omitir esto.
+          }
+        });
       } else {
         res.status(401).json({ error: 'Incorrect password' });
       }
